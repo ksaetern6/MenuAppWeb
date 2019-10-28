@@ -60,6 +60,7 @@ db.sqlite3
 instance/
 .webassets-cache
 .flaskenv
+.env
 
 # Scrapy stuff:
 .scrapy
@@ -104,5 +105,8 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# google json
+# personal files
+fbSDK
 
+# google json
+app/firebase-private-key.json
