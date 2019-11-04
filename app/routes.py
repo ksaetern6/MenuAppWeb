@@ -1,6 +1,7 @@
 import os
 import pyrebase
 from app import app
+from app.forms import LoginForm
 from flask import render_template
 
 config = {
@@ -15,10 +16,16 @@ config = {
     "measurementId": "G-33NWQZKM7W"
 
 }
+#Firebase SDK ADC
+#default_app = firebase_admin.initialize_app()
 
+#pyrebase package
 firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
 @app.route("/")
-def home():
-    return render_template('/index.html', title="index title")
+def index():
+    #form = LoginForm
+    testObj = db.child("TestName").get()
+    return render_template('/index.html', testObj=testObj)
+	#output = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
