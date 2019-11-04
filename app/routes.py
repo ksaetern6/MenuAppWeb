@@ -2,7 +2,7 @@ import os
 import pyrebase
 from app import app
 from app.forms import LoginForm
-from flask import render_template
+from flask import flash, render_template, redirect, url_for, request
 
 config = {
     "apiKey": os.getenv('FIREBASE_API_KEY'),
@@ -26,6 +26,15 @@ db = firebase.database()
 @app.route("/")
 def index():
     #form = LoginForm
-    testObj = db.child("TestName").get()
-    return render_template('/index.html', testObj=testObj)
+	testObj = db.child("TestName").get()
+	return render_template('/index.html', testObj=testObj)
 	#output = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+
+@app.route("/login", methods=["GET", "POST"])
+def loginMain():
+	form = LoginForm()
+	if request.method=='POST':
+	#if form.validate_on_submit():
+		flash('one moment..')
+		return redirect(url_for('index'))
+	return render_template('/loginMain.html', form=form)
