@@ -1,7 +1,8 @@
 import os
 import pyrebase
-from app import app
+from app import app, FireBaseAuth
 from app.forms import LoginForm
+from flask_login import login_required
 from flask import flash, render_template, redirect, url_for, request
 
 config = {
@@ -24,6 +25,7 @@ firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
 @app.route("/")
+#@login_required
 def index():
     #form = LoginForm
 	testObj = db.child("TestName").get()
@@ -33,8 +35,19 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def loginMain():
 	form = LoginForm()
-	if request.method=='POST':
-	#if form.validate_on_submit():
-		flash('one moment..')
+	#if request.method=='POST':
+	if request.method=="POST":
+		# flash(request.form["email"])
+		# flash(request["password"])
+		# flash('one moment..')
+		# validate user using firebase
+		# login_user
+		# next
 		return redirect(url_for('index'))
+
 	return render_template('/loginMain.html', form=form)
+
+@app.route("/work")
+def letsDothis():
+	FB_API_KEY = app.config['FIREBASE_API_KEY']
+	return render_template('/letsDoThis.html', FB_API_KEY=FB_API_KEY)
