@@ -3,15 +3,18 @@
     <header><title>Index Header Title</title></header>
 </head>
     <body>
-            <p>Hello World from Index</p>
-            <button id="load">load</button>
-            <p id="first-p"></p>
+        <p>Hello World from Index</p>
+        <button id="load">load</button>
+        <p id="first-p"></p>
+        <img id = 'myimg' src="">
+
         <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
         <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
             
         <!-- Add Firebase products that you want to use -->
         <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script> 
         <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-storage.js"></script>
         <script>
                 // Your web app's Firebase configuration
                 var firebaseConfig = {
@@ -27,6 +30,13 @@
                 // Initialize Firebase
                 firebase.initializeApp(firebaseConfig);
                 var db = firebase.firestore();
+                var storage = firebase.storage();
+                var storageRef = storage.ref('sandwich.jpg');
+                gs://menuapp-f3764.appspot.com/sandwich.jpg
+                storageRef.getDownloadURL().then(function(url) {
+                    var img = document.getElementById('myimg');
+                    img.src = url;
+                })
                 console.log("firebase initialized");
                 
                 const pHeader = document.querySelector("#first-p");
@@ -37,7 +47,7 @@
                     docRef.get().then(function(doc) {
                         if(doc && doc.exists) {
                             const myData = doc.data();
-                            pHeader.innerHTML = myData.Name;
+                            pHeader.innerHTML = myData.test;
                         }
                     })
                 })
