@@ -32,8 +32,8 @@ def index():
 	return render_template('/index.html', testObj=testObj)
 	#output = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
-@app.route("/login", methods=["GET", "POST"])
-def loginMain():
+@app.route("/debugLogin", methods=["GET", "POST"])
+def debugLoginPage():
 	form = LoginForm()
 	#if request.method=='POST':
 	if request.method=="POST":
@@ -45,9 +45,9 @@ def loginMain():
 		# next
 		return redirect(url_for('index'))
 
-	return render_template('/loginMain.html', form=form)
+	return render_template('/debugLogin.html', form=form)
 
-@app.route("/work")
-def letsDothis():
+@app.route("/login")
+def loginMain():
 	FB_API_KEY = app.config['FIREBASE_API_KEY']
-	return render_template('/letsDoThis.html', FB_API_KEY=FB_API_KEY)
+	return render_template('/loginMain.html', FB_API_KEY=FB_API_KEY)

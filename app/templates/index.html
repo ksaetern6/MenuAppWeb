@@ -1,7 +1,47 @@
+<html>
 <head>
-<header><title>Index Header Title</title></header>
+    <header><title>Index Header Title</title></header>
 </head>
-<body>
-<p>Hello World from Index</p>
-<p>{{ testObj }}</p>
-</body>
+    <body>
+        <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+        <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+            
+        <!-- Add Firebase products that you want to use -->
+        <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script>
+        <script>
+                // Your web app's Firebase configuration
+                var firebaseConfig = {
+                    apiKey: 'AIzaSyBMNp1j4Di3OaHlGPXJ9LuRvXMPAeMmcro',
+                    authDomain: "menuapp-f3764.firebaseapp.com",
+                    databaseURL: "https://menuapp-f3764.firebaseio.com",
+                    projectId: "menuapp-f3764",
+                    storageBucket: "menuapp-f3764.appspot.com",
+                    messagingSenderId: "77920760117",
+                    appId: "1:77920760117:web:67cf1a4799eb73e064dc7c",
+                    measurementId: "G-33NWQZKM7W"
+                };
+                // Initialize Firebase
+                firebase.initializeApp(firebaseConfig);
+        </script>
+
+        <script>
+            console.log("hello world");
+            initApp = function() {
+                firebase.auth().onAuthStateChanged(function(user) {
+                    if(user){
+                        displayName = user.displayName;
+                        document.getElementById("first-p").innerHTML = displayName;
+                    }
+                }, function(error){
+                    console.log(error);
+                })
+            }
+            window.addEventListener('load', function() {
+                initApp();
+                });
+        </script>
+
+        <p>Hello World from Index</p>
+        <p id="first-p"></p>
+    </body>
+</html>
