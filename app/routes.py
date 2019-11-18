@@ -51,3 +51,10 @@ def debugLoginPage():
 def loginMain():
 	FB_API_KEY = app.config['FIREBASE_API_KEY']
 	return render_template('/loginMain.html', FB_API_KEY=FB_API_KEY)
+
+@app.route("/upload", methods=['GET', 'POST'])
+def uploadMain():
+	if request.method == 'POST':
+		f = request.files.get('file')
+		f.save(os.path.join(os.getcwd()+'/app/uploads', f.filename))
+	return render_template('/upload.html')
