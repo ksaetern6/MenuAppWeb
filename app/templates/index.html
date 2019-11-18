@@ -3,11 +3,15 @@
     <header><title>Index Header Title</title></header>
 </head>
     <body>
+            <p>Hello World from Index</p>
+            <button id="load">load</button>
+            <p id="first-p"></p>
         <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
         <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
             
         <!-- Add Firebase products that you want to use -->
-        <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script> 
+        <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
         <script>
                 // Your web app's Firebase configuration
                 var firebaseConfig = {
@@ -22,15 +26,29 @@
                 };
                 // Initialize Firebase
                 firebase.initializeApp(firebaseConfig);
+                var db = firebase.firestore();
+                console.log("firebase initialized");
+                
+                const pHeader = document.querySelector("#first-p");
+                const loadBtn = document.querySelector("#load");
+                const docRef = db.doc("Restaurants/E2zVURqnFMjg9t6bkfYs");
+                
+                loadBtn.addEventListener("click",function(){
+                    docRef.get().then(function(doc) {
+                        if(doc && doc.exists) {
+                            const myData = doc.data();
+                            pHeader.innerHTML = myData.Name;
+                        }
+                    })
+                })
         </script>
 
         <script>
             console.log("hello world");
             initApp = function() {
                 firebase.auth().onAuthStateChanged(function(user) {
-                    if(user){
-                        displayName = user.displayName;
-                        document.getElementById("first-p").innerHTML = displayName;
+                    if(!user){
+                       window.location.href=("/login");
                     }
                 }, function(error){
                     console.log(error);
@@ -40,8 +58,5 @@
                 initApp();
                 });
         </script>
-
-        <p>Hello World from Index</p>
-        <p id="first-p"></p>
     </body>
 </html>
