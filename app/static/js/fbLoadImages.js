@@ -1,5 +1,5 @@
 var firebaseConfig = {
-    apiKey: 'AIzaSyBMNp1j4Di3OaHlGPXJ9LuRvXMPAeMmcro',
+    apiKey: '{{ FB_API_KEY }}',
     authDomain: "menuapp-f3764.firebaseapp.com",
     databaseURL: "https://menuapp-f3764.firebaseio.com",
     projectId: "menuapp-f3764",

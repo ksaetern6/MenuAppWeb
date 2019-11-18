@@ -28,8 +28,8 @@ db = firebase.database()
 #@login_required
 def index():
     #form = LoginForm
-	testObj = db.child("TestName").get()
-	return render_template('/index.html', testObj=testObj)
+	FB_API_KEY = app.config['FIREBASE_API_KEY']
+	return render_template('/index.html', FB_API_KEY=FB_API_KEY)
 	#output = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
 @app.route("/debugLogin", methods=["GET", "POST"])
