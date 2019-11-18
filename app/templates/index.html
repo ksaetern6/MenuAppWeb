@@ -31,12 +31,7 @@
                 firebase.initializeApp(firebaseConfig);
                 var db = firebase.firestore();
                 var storage = firebase.storage();
-                var storageRef = storage.ref('sandwich.jpg');
-                gs://menuapp-f3764.appspot.com/sandwich.jpg
-                storageRef.getDownloadURL().then(function(url) {
-                    var img = document.getElementById('myimg');
-                    img.src = url;
-                })
+
                 console.log("firebase initialized");
                 
                 const pHeader = document.querySelector("#first-p");
@@ -47,6 +42,12 @@
                     docRef.get().then(function(doc) {
                         if(doc && doc.exists) {
                             const myData = doc.data();
+                            var storageRef = storage.refFromURL(myData.test);
+                            storageRef.getDownloadURL().then(function(url) {
+                                var img = document.getElementById('myimg');
+                                img.src = url;
+                                console.log(url);
+                            })
                             pHeader.innerHTML = myData.test;
                         }
                     })
