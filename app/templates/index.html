@@ -5,8 +5,11 @@
     <body>
         <p>Hello World from Index</p>
         <button id="load">load</button>
-        <p id="first-p"></p>
-        <img id = 'myimg' src="">
+        <div>
+            <img id='myimg' src="">
+            <p id="first-p"></p>
+        </div>
+        
 
         <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
         <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
@@ -31,25 +34,31 @@
                 firebase.initializeApp(firebaseConfig);
                 var db = firebase.firestore();
                 var storage = firebase.storage();
-
                 console.log("firebase initialized");
                 
                 const pHeader = document.querySelector("#first-p");
                 const loadBtn = document.querySelector("#load");
                 const docRef = db.doc("Restaurants/E2zVURqnFMjg9t6bkfYs");
                 
-                loadBtn.addEventListener("click",function(){
+                loadBtn.addEventListener("click",function() {
                     docRef.get().then(function(doc) {
                         if(doc && doc.exists) {
                             const myData = doc.data();
-                            var storageRef = storage.refFromURL(myData.test);
-                            storageRef.getDownloadURL().then(function(url) {
-                                var img = document.getElementById('myimg');
-                                img.src = url;
-                                console.log(url);
-                            })
-                            pHeader.innerHTML = myData.test;
-                        }
+
+                            db.collection("/Restaurants/E2zVURqnFMjg9t6bkfYs/items").get()
+                            .then((querySnapshot) => {
+                                querySnapshot.forEach((doc) => {
+                                    console.log(`${doc.id} => ${doc.data().locationRef}`);
+                                    //imgList.push(doc.locationRef);
+                                    storage.refFromURL(doc.data().locationRef).getDownloadURL().then(function(url) {
+                                        var imgObj = new Image(500,300);
+                                        imgObj.src=url;
+                                        document.body.append(imgObj);
+                                    });
+                                });
+                            });
+
+                        } // if
                     })
                 })
         </script>
