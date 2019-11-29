@@ -1,5 +1,8 @@
 import os
 import pyrebase
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import firestore
 from app import app, FireBaseAuth
 from app.forms import LoginForm
 from flask_login import login_required
@@ -21,15 +24,24 @@ config = {
 #default_app = firebase_admin.initialize_app()
 
 #pyrebase package
-firebase = pyrebase.initialize_app(config)
-db = firebase.database()
+# firebase = pyrebase.initialize_app(config)
+# db = firebase.database()
+
+#firebase-admin SDK
+cred = credentials.Certificate(app.config['GOOGLE_APPLICATION_CREDS'])
+firebase_admin.initialize_app(cred)
+
+db = firestore.client()
+user_ref = db.collection(u'Restaurants')
+docs=user_ref.stream()
 
 @app.route("/")
 #@login_required
 def index():
     #form = LoginForm
+	#google_creds=app.config['GOOGLE_APPLICATION_CREDS']
 	FB_API_KEY = app.config['FIREBASE_API_KEY']
-	return render_template('/index.html', FB_API_KEY=FB_API_KEY)
+	return render_template('/index.html', FB_API_KEY=FB_API_KEY, gdocs=docs)
 	#output = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
 
 @app.route("/debugLogin", methods=["GET", "POST"])
@@ -57,4 +69,5 @@ def uploadMain():
 	if request.method == 'POST':
 		f = request.files.get('file')
 		f.save(os.path.join(os.getcwd()+'/app/uploads', f.filename))
+		db.child('')
 	return render_template('/upload.html')

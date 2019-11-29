@@ -4,6 +4,12 @@
 </head>
     <body>
         <p>Hello World from Index</p>
+        
+        <ul>
+            {% for doc in gdocs %}
+            <li>{{doc.to_dict()}}</li>
+            {% endfor %}
+        </ul>
         <button id="load">load</button>
         <div>
             <img id='myimg' src="">
