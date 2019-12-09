@@ -1,8 +1,5 @@
-<html>
-<head>
-    <header><title>Index Header Title</title></header>
-</head>
-    <body>
+{% extends 'base.html' %}
+{% block content %}
         <p>Hello World from Index</p>
         
         <ul>
@@ -26,5 +23,5 @@
         <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-storage.js"></script>
         <script src="{{ url_for('static', filename='js/fbLoadImages.js') }}"></script>
         <!-- <script src="{{ url_for('static', filename='js/loginCheck.js') }}"></script> -->
-    </body>
-</html>
+
+{% endblock %}

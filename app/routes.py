@@ -38,11 +38,10 @@ docs=user_ref.stream()
 @app.route("/")
 #@login_required
 def index():
-    #form = LoginForm
-	#google_creds=app.config['GOOGLE_APPLICATION_CREDS']
-	FB_API_KEY = app.config['FIREBASE_API_KEY']
-	return render_template('/index.html', FB_API_KEY=FB_API_KEY, gdocs=docs)
-	#output = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+	# get array of locationRef dl links for images and print on frontend
+	# 
+
+	return render_template('/index.html', gdocs=docs)
 
 @app.route("/debugLogin", methods=["GET", "POST"])
 def debugLoginPage():
@@ -68,6 +67,13 @@ def loginMain():
 def uploadMain():
 	if request.method == 'POST':
 		f = request.files.get('file')
-		f.save(os.path.join(os.getcwd()+'/app/uploads', f.filename))
-		db.child('')
+		# f.save(os.path.join(os.getcwd()+'/app/uploads', f.filename))
+		# db.child('')
+		# get QRcode of image
+		# upload images to firebase
+		# upload locationRef of both QRCode and Image to firestore
 	return render_template('/upload.html')
+
+@app.route("/base")
+def basePage():
+	return render_template('/base.html')
