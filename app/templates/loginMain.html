@@ -1,120 +1,137 @@
-<html>
-    <head>
-        <title>Please Work!!!</title>
+{% extends 'base.html' %}
+{% block content %}
+<head>
+    <title>Please Work!!!</title>
 
-    </head>
-    <body>
-        <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-        <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
-        
-        <!-- Add Firebase products that you want to use -->
-        <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script>
+</head>
+<body>
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
+    
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script>
 
-        <!--============================================
-        Firebase Initialization
-        ================================================-->
-        <script>
-                // Your web app's Firebase configuration
-                var firebaseConfig = {
-                    apiKey: '{{ FB_API_KEY }}',
-                    authDomain: "menuapp-f3764.firebaseapp.com",
-                    databaseURL: "https://menuapp-f3764.firebaseio.com",
-                    projectId: "menuapp-f3764",
-                    storageBucket: "menuapp-f3764.appspot.com",
-                    messagingSenderId: "77920760117",
-                    appId: "1:77920760117:web:67cf1a4799eb73e064dc7c",
-                    measurementId: "G-33NWQZKM7W"
-                };
-                // Initialize Firebase
-                firebase.initializeApp(firebaseConfig);
-        </script>
-
-        <script src="https://cdn.firebase.com/libs/firebaseui/4.2.0/firebaseui.js"></script>
-        <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/4.2.0/firebaseui.css" />
-        <script type="text/javascript">
-        // FirebaseUI config.
-        var uiConfig = {
-            signInSuccessUrl: '/login',
-            signInOptions: [
-            // Leave the lines as is for the providers you want to offer your users.
-            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-            firebase.auth.EmailAuthProvider.PROVIDER_ID
-            ],
-            // tosUrl and privacyPolicyUrl accept either url string or a callback
-            // function.
-            // Terms of service url/callback.
-            tosUrl: '<your-tos-url>',
-            // Privacy policy url/callback.
-            privacyPolicyUrl: function() {
-            window.location.assign('<your-privacy-policy-url>');
-            }
-        };
-
-        // Initialize the FirebaseUI Widget using Firebase.
-        var ui = new firebaseui.auth.AuthUI(firebase.auth());
-        // The start method will wait until the DOM is loaded.
-        ui.start('#firebaseui-auth-container', uiConfig);
-        </script>
-
-        <!-- Check AUTH State -->
-        <script type="text/javascript">
-            initApp = function() {
-              firebase.auth().onAuthStateChanged(function(user) {
-                if (user) {
-                  // User is signed in.
-                  var displayName = user.displayName;
-                  var email = user.email;
-                  var emailVerified = user.emailVerified;
-                  var photoURL = user.photoURL;
-                  var uid = user.uid;
-                  var phoneNumber = user.phoneNumber;
-                  var providerData = user.providerData;
-                  user.getIdToken().then(function(accessToken) {
-                    document.getElementById('sign-in-status').textContent = 'Signed in';
-                    document.getElementById('sign-in').textContent = 'Sign out';
-                    // Sign Out button
-                    document.getElementById('sign-out-button').onclick = function(event){
-                        console.log("Sign Out button clicked")
-                        firebase.auth().signOut().then(function(){
-                            console.log(`${email} Signed Out`);
-                        }, function(error) {
-                            console.error("Sign Out Error", error);
-                        });
-                    };
-                    //
-                    document.getElementById('account-details').textContent = JSON.stringify({
-                      displayName: displayName,
-                      email: email,
-                      emailVerified: emailVerified,
-                      phoneNumber: phoneNumber,
-                      photoURL: photoURL,
-                      uid: uid,
-                      accessToken: accessToken,
-                      providerData: providerData
-                    }, null, '  ');
-                  });
-                } else {
-                  // User is signed out.
-                  document.getElementById('sign-in-status').textContent = 'Signed out';
-                  document.getElementById('sign-in').textContent = 'Sign in';
-                  document.getElementById('account-details').textContent = 'null';
-                }
-              }, function(error) {
-                console.log(error);
-              });
+    <!--============================================
+    Firebase Initialization
+    ================================================-->
+    <script>
+            // Your web app's Firebase configuration
+            var firebaseConfig = {
+                apiKey: '{{ FB_API_KEY }}',
+                authDomain: "menuapp-f3764.firebaseapp.com",
+                databaseURL: "https://menuapp-f3764.firebaseio.com",
+                projectId: "menuapp-f3764",
+                storageBucket: "menuapp-f3764.appspot.com",
+                messagingSenderId: "77920760117",
+                appId: "1:77920760117:web:67cf1a4799eb73e064dc7c",
+                measurementId: "G-33NWQZKM7W"
             };
-      
-            window.addEventListener('load', function() {
-              initApp();
-            });
-          </script>
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+    </script>
 
-        <h1>Welcome to the world</h1>
-        <div id="sign-in-status"></div>
-        <div id="sign-in"></div>
-        <button id="sign-out-button">Sign Out</button>
-        <pre id="account-details"></pre>
-        <div id="firebaseui-auth-container"></div>
+    <script src="https://cdn.firebase.com/libs/firebaseui/4.2.0/firebaseui.js"></script>
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/4.2.0/firebaseui.css" />
+    <script type="text/javascript">
+    // FirebaseUI config.
+    var uiConfig = {
+        signInSuccessUrl: '/',
+        signInOptions: [
+        // Leave the lines as is for the providers you want to offer your users.
+        firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        firebase.auth.EmailAuthProvider.PROVIDER_ID
+        ],
+        // tosUrl and privacyPolicyUrl accept either url string or a callback
+        // function.
+        // Terms of service url/callback.
+        tosUrl: '<your-tos-url>',
+        // Privacy policy url/callback.
+        privacyPolicyUrl: function() {
+        window.location.assign('<your-privacy-policy-url>');
+        }
+    };
 
-    </body>
-</html>
+    // Initialize the FirebaseUI Widget using Firebase.
+    var ui = new firebaseui.auth.AuthUI(firebase.auth());
+    // The start method will wait until the DOM is loaded.
+    ui.start('#firebaseui-auth-container', uiConfig);
+    </script>
+    <!-- Check AUTH State -->
+    <script type="text/javascript">
+        initApp = function() {
+          firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+              // User is signed in.
+              var displayName = user.displayName;
+              var email = user.email;
+              var emailVerified = user.emailVerified;
+              var photoURL = user.photoURL;
+              var uid = user.uid;
+              var phoneNumber = user.phoneNumber;
+              var providerData = user.providerData;
+              user.getIdToken().then(function(accessToken) {
+                document.getElementById('sign-in-status').textContent = 'Signed in';
+                document.getElementById('sign-in').textContent = 'Sign out';
+                // Sign Out button
+                document.getElementById('sign-out-button').onclick = function(event){
+                    console.log("Sign Out button clicked")
+                    firebase.auth().signOut().then(function(){
+                        console.log(`${email} Signed Out`);
+                    }, function(error) {
+                        console.error("Sign Out Error", error);
+                    });
+                };
+                //
+                document.getElementById('account-details').textContent = JSON.stringify({
+                  displayName: displayName,
+                  email: email,
+                  emailVerified: emailVerified,
+                  phoneNumber: phoneNumber,
+                  photoURL: photoURL,
+                  uid: uid,
+                  accessToken: accessToken,
+                  providerData: providerData
+                }, null, '  ');
+              });
+              var userid = {
+                'uid': user.uid
+              }
+              $(function() {
+                  $.ajax({
+                    url: '/',
+                    contentType: "application/json",
+                    dataType: "json",
+                    type: 'POST',
+                    data: JSON.stringify(userid),
+                })
+                .done(function(result) {
+                  console.log(result)
+                })
+              });
+
+            } else {
+              // User is signed out.
+              document.getElementById('sign-in-status').textContent = 'User is signed out';
+              document.getElementById('sign-in').textContent = 'Sign in';
+              document.getElementById('account-details').textContent = 'null';
+            }
+          }, function(error) {
+            console.log(error);
+          });
+        };
+  
+        window.addEventListener('load', function() {
+          initApp();
+        });
+      </script>
+
+    <h1>Welcome to the world</h1>
+    <p>{{ data }}</p>
+    <div id="sign-in-status"></div>
+    <div id="sign-in"></div>
+    <button id="sign-out-button">Sign Out</button>
+    <pre id="account-details"></pre>
+    <div id="firebaseui-auth-container"></div>
+
+</body>
+{% endblock %}

@@ -1,18 +1,14 @@
-var firebaseConfig = {
-    apiKey: '{{ FB_API_KEY }}',
-    authDomain: "menuapp-f3764.firebaseapp.com",
-    databaseURL: "https://menuapp-f3764.firebaseio.com",
-    projectId: "menuapp-f3764",
-    storageBucket: "menuapp-f3764.appspot.com",
-    messagingSenderId: "77920760117",
-    appId: "1:77920760117:web:67cf1a4799eb73e064dc7c",
-    measurementId: "G-33NWQZKM7W"
-};
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+       console.log("user is signed in");
+    }
+   else {
+       console.log("user is not signed in");
+     }
+   })
+
 var db = firebase.firestore();
 var storage = firebase.storage();
-console.log("firebase initialized");
 
 const pHeader = document.querySelector("#first-p");
 const loadBtn = document.querySelector("#load");
@@ -29,7 +25,7 @@ loadBtn.addEventListener("click",function() {
                     console.log(`${doc.id} => ${doc.data().locationRef}`);
                     //imgList.push(doc.locationRef);
                     storage.refFromURL(doc.data().locationRef).getDownloadURL().then(function(url) {
-                        var imgObj = new Image(500,300);
+                        var imgObj = new Image(300,300);
                         imgObj.src=url;
                         document.body.append(imgObj);
                     });

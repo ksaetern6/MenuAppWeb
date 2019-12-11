@@ -1,7 +1,7 @@
 import os
 import pyrebase
 import firebase_admin
-from firebase_admin import credentials
+from firebase_admin import credentials, auth
 from firebase_admin import firestore
 from app import app, FireBaseAuth
 from app.forms import LoginForm
@@ -20,12 +20,6 @@ config = {
     "measurementId": "G-33NWQZKM7W"
 
 }
-#Firebase SDK ADC
-#default_app = firebase_admin.initialize_app()
-
-#pyrebase package
-# firebase = pyrebase.initialize_app(config)
-# db = firebase.database()
 
 #firebase-admin SDK
 cred = credentials.Certificate(app.config['GOOGLE_APPLICATION_CREDS'])
@@ -35,13 +29,16 @@ db = firestore.client()
 user_ref = db.collection(u'Restaurants')
 docs=user_ref.stream()
 
-@app.route("/")
+@app.route("/", methods=['GET','POST'])
 #@login_required
 def index():
+	FB_API_KEY = app.config['FIREBASE_API_KEY']
 	# get array of locationRef dl links for images and print on frontend
-	# 
-
-	return render_template('/index.html', gdocs=docs)
+	data={}
+	if request.method == 'POST':
+		data = request.get_json()
+		print(data)
+	return render_template('/index.html', FB_API_KEY=FB_API_KEY, gdocs=docs, data=data)
 
 @app.route("/debugLogin", methods=["GET", "POST"])
 def debugLoginPage():
@@ -58,10 +55,16 @@ def debugLoginPage():
 
 	return render_template('/debugLogin.html', form=form)
 
-@app.route("/login")
+@app.route("/login", methods=["POST", "GET"])
 def loginMain():
 	FB_API_KEY = app.config['FIREBASE_API_KEY']
-	return render_template('/loginMain.html', FB_API_KEY=FB_API_KEY)
+	f = "string"
+	# get post data and add user to fb
+	if request.method == 'POST':
+		f = request.get_json()
+		redirect(url_for('/upload'))
+
+	return render_template('/loginMain.html', data=f, FB_API_KEY=FB_API_KEY)
 
 @app.route("/upload", methods=['GET', 'POST'])
 def uploadMain():
