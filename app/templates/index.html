@@ -1,44 +1,60 @@
 {% extends 'base.html' %}
 {% block content %}
-<body>
-        <p>Hello World from Index</p>
-        <pre id="account-details"></pre>
-        <p id="placeholder">{{ data }}</p>
-        <ul>
-            {% for doc in gdocs %}
-            <li>{{doc.to_dict()}}</li>
-            {% endfor %}
-        </ul>
-        <button id="load">load</button>
-        <div>
-            <img id='myimg' src="">
-        </div>
+    <p>Hello World from Index</p>
+
+    <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/menuapp-f3764.appspot.com/o/Konas%2Fsandwich1%2Fsandwich.jpg?alt=media&token=8f8cc222-39e4-46c5-b77b-1eb4fcd64576 alt="Card image cap">
+            <div class="card-body">
+              <h5 class="card-title">Card title</h5>
+              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+              <a href="#" class="btn btn-primary">Go somewhere</a>
+            </div>
+    </div>
+    <div>
+        <img id='myimg' src="">
+    </div>
+
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
         
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script> 
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-storage.js"></script>
+    <script>
+        var firebaseConfig = {
+        apiKey: '{{ FB_API_KEY }}',
+        authDomain: "menuapp-f3764.firebaseapp.com",
+        databaseURL: "https://menuapp-f3764.firebaseio.com",
+        projectId: "menuapp-f3764",
+        storageBucket: "menuapp-f3764.appspot.com",
+        messagingSenderId: "77920760117",
+        appId: "1:77920760117:web:67cf1a4799eb73e064dc7c",
+        measurementId: "G-33NWQZKM7W"
+        };
+        firebase.initializeApp(firebaseConfig);
+    </script>
 
-        <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-        <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-app.js"></script>
-            
-        <!-- Add Firebase products that you want to use -->
-        <script src="https://www.gstatic.com/firebasejs/7.2.3/firebase-auth.js"></script> 
-        <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-firestore.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/7.4.0/firebase-storage.js"></script>
-        <script>
-            var firebaseConfig = {
-            apiKey: '{{ FB_API_KEY }}',
-            authDomain: "menuapp-f3764.firebaseapp.com",
-            databaseURL: "https://menuapp-f3764.firebaseio.com",
-            projectId: "menuapp-f3764",
-            storageBucket: "menuapp-f3764.appspot.com",
-            messagingSenderId: "77920760117",
-            appId: "1:77920760117:web:67cf1a4799eb73e064dc7c",
-            measurementId: "G-33NWQZKM7W"
-            };
-            firebase.initializeApp(firebaseConfig);
-        </script>
+    <script>
+    var db = firebase.firestore();
+    var storage = firebase.storage();
 
-        <script src="{{ url_for('static', filename='js/fbLoadImages.js') }}"></script>
+    const pHeader = document.querySelector("#first-p");
+    const loadBtn = document.querySelector("#load");
 
-    </body>
-        <!-- <script src="{{ url_for('static', filename='js/loginCheck.js') }}"></script> -->
+    // Read info
+    var item_dict = {{ items | safe }}
+
+    for(item in item_dict){
+        storage.refFromURL(item_dict[item]).getDownloadURL().then(function(url) {
+            var imgObj = new Image(300,300);
+            imgObj.src=url
+            document.body.append(imgObj);
+        })
+    }
+
+    </script>
+
 
 {% endblock %}

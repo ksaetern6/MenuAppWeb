@@ -6,7 +6,7 @@ from firebase_admin import firestore
 from app import app, FireBaseAuth
 from app.forms import LoginForm
 from flask_login import login_required
-from flask import flash, render_template, redirect, url_for, request
+from flask import flash, render_template, redirect, url_for, request, session
 
 config = {
     "apiKey": os.getenv('FIREBASE_API_KEY'),
@@ -26,19 +26,26 @@ cred = credentials.Certificate(app.config['GOOGLE_APPLICATION_CREDS'])
 firebase_admin.initialize_app(cred)
 
 db = firestore.client()
-user_ref = db.collection(u'Restaurants')
-docs=user_ref.stream()
 
 @app.route("/", methods=['GET','POST'])
 #@login_required
 def index():
 	FB_API_KEY = app.config['FIREBASE_API_KEY']
 	# get array of locationRef dl links for images and print on frontend
-	data={}
 	if request.method == 'POST':
 		data = request.get_json()
-		print(data)
-	return render_template('/index.html', FB_API_KEY=FB_API_KEY, gdocs=docs, data=data)
+		print("it doesnt load the page?")
+		session['uid'] = data['uid']
+		print(data['uid'])
+
+	print(session['uid'])
+	# get all items on the menu
+	if session['uid']:
+		items = getAllItems(session['uid'])
+	else:
+		items = {}
+
+	return render_template('/index.html', page="Home", FB_API_KEY=FB_API_KEY, data=session['uid'], items=items)
 
 @app.route("/debugLogin", methods=["GET", "POST"])
 def debugLoginPage():
@@ -58,13 +65,12 @@ def debugLoginPage():
 @app.route("/login", methods=["POST", "GET"])
 def loginMain():
 	FB_API_KEY = app.config['FIREBASE_API_KEY']
-	f = "string"
 	# get post data and add user to fb
-	if request.method == 'POST':
-		f = request.get_json()
-		redirect(url_for('/upload'))
+	# if request.method == 'POST':
+	# 	f = request.get_json()
+	# 	redirect(url_for('/upload'))
 
-	return render_template('/loginMain.html', data=f, FB_API_KEY=FB_API_KEY)
+	return render_template('/loginMain.html', page="Login", FB_API_KEY=FB_API_KEY)
 
 @app.route("/upload", methods=['GET', 'POST'])
 def uploadMain():
@@ -80,3 +86,24 @@ def uploadMain():
 @app.route("/base")
 def basePage():
 	return render_template('/base.html')
+
+def getAllItems(uid):
+	# find the restaurant based on user's id
+	resta_ref = db.collection(u'Restaurants')
+	query_ref = resta_ref.where(u'uid', u'==', u'{}'.format(uid)).stream()
+
+	resta_id=''
+	for doc in query_ref:
+		resta_id = doc.id
+
+	# go through restaurant's items
+	all_items = db.collection(u'Restaurants/{}/items'.format(resta_id)).stream()
+
+	# get all location Refs
+	items = {}
+	
+	for item in all_items:
+		item_dict = item.to_dict()
+		items[item_dict['locationRef']] = item_dict['QRCode']
+
+	return items
