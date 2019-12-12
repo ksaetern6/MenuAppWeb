@@ -47,14 +47,15 @@ def index():
 		session['uid'] = data['uid']
 		print(data['uid'])
 
-	print(session['uid'])
+	STATUS=False
 	# get all items on the menu
 	if session['uid']:
 		items = getAllItems(session['uid'])
+		STATUS=True
 	else:
-		items = {}
+		return redirect(url_for('loginMain'))
 
-	return render_template('/index.html', page="Home", FB_API_KEY=FB_API_KEY, data=session['uid'], items=items)
+	return render_template('/index.html', page="Home", FB_API_KEY=FB_API_KEY, data=session['uid'], items=items, status=STATUS)
 
 @app.route("/debugLogin", methods=["GET", "POST"])
 def debugLoginPage():
@@ -74,15 +75,22 @@ def debugLoginPage():
 @app.route("/login", methods=["POST", "GET"])
 def loginMain():
 	FB_API_KEY = app.config['FIREBASE_API_KEY']
-	# get post data and add user to fb
-	# if request.method == 'POST':
-	# 	f = request.get_json()
-	# 	redirect(url_for('/upload'))
-
-	return render_template('/loginMain.html', page="Login", FB_API_KEY=FB_API_KEY)
+	# if session['uid']:
+	# 	return redirect(url_for('index'))
+	if session['uid']:
+		STATUS=True
+	else:
+		STATUS=False
+	return render_template('/loginMain.html', page="Login", FB_API_KEY=FB_API_KEY, status=STATUS)
 
 @app.route("/upload", methods=['GET', 'POST'])
 def uploadMain():
+	if not session["uid"]:
+		print("redirect to login")
+		return redirect(url_for('loginMain'))
+
+	FB_API_KEY = app.config['FIREBASE_API_KEY']
+
 	if request.method == 'POST':
 		# get uploaded file
 		f = request.files.get('file')
@@ -109,12 +117,19 @@ def uploadMain():
 
 		# add qrcode to firestore
 		addFieldToDocument('QRCode',qrCodeRef,restauId,docUrl)
-
-	return render_template('/upload.html', page="Upload")
+	if session['uid']:
+		STATUS=True
+	else:
+		STATUS=False
+	return render_template('/upload.html', page="Upload", FB_API_KEY=FB_API_KEY, status=STATUS)
 
 @app.route("/base")
 def basePage():
-	return render_template('/base.html')
+	if session['uid']:
+		STATUS=True
+	else:
+		STATUS=False
+	return render_template('/base.html' , status=STATUS)
 
 
 """

@@ -35,7 +35,7 @@
     <script type="text/javascript">
     // FirebaseUI config.
     var uiConfig = {
-        signInSuccessUrl: '/login',
+        signInSuccessUrl: '/',
         signInOptions: [
         // Leave the lines as is for the providers you want to offer your users.
         firebase.auth.GoogleAuthProvider.PROVIDER_ID,
@@ -69,32 +69,20 @@
               var uid = user.uid;
               var phoneNumber = user.phoneNumber;
               var providerData = user.providerData;
-              user.getIdToken().then(function(accessToken) {
-                document.getElementById('sign-in-status').textContent = 'Signed in';
-                document.getElementById('sign-in').textContent = 'Sign out';
-                // Sign Out button
-                document.getElementById('sign-out-button').onclick = function(event){
-                    console.log("Sign Out button clicked")
-                    firebase.auth().signOut().then(function(){
-                     console.log(`${email} Signed Out`);
-                    }, function(error) {
-                        console.error("Sign Out Error", error);
-                    });
+              //document.getElementById('sign-in-status').textContent = 'Signed in';
+              var sign_out_button = document.getElementById('sign-out-button')
+                sign_out_button.onclick = function(event){
+                  sign_out_button.style.display="block";
+                  console.log("Sign Out button clicked")
+                  firebase.auth().signOut().then(function(){
+                    console.log(`${email} Signed Out`);
+                  }, function(error) {
+                      console.error("Sign Out Error", error);
+                  });
 
-                    console.log(user.uid)
-                };
-                //
-                document.getElementById('account-details').textContent = JSON.stringify({
-                  displayName: displayName,
-                  email: email,
-                  emailVerified: emailVerified,
-                  phoneNumber: phoneNumber,
-                  photoURL: photoURL,
-                  uid: uid,
-                  accessToken: accessToken,
-                  providerData: providerData
-                }, null, '  ');
-              });
+                  console.log(user.uid)
+              };
+
               console.log(user.uid);
               var userid = {
                 'uid': user.uid
@@ -114,9 +102,10 @@
 
             } else {
               // User is signed out.
-              document.getElementById('sign-in-status').textContent = 'User is signed out';
-              document.getElementById('sign-in').textContent = 'Sign in';
-              document.getElementById('account-details').textContent = 'null';
+              //document.getElementById('sign-in-status').textContent = 'User is signed out';
+              var sign_in_button = document.getElementById('sign-out-button');
+              sign_in_button.textContent = 'Sign in';
+              sign_in_button.style.display="none";
               var userid = {
                 "uid": ""
                 };
@@ -143,12 +132,8 @@
         });
       </script>
 
-    <h1>Welcome to the world</h1>
-    <p>{{ data }}</p>
     <div id="sign-in-status"></div>
-    <div id="sign-in"></div>
     <button id="sign-out-button">Sign Out</button>
-    <pre id="account-details"></pre>
     <div id="firebaseui-auth-container"></div>
 
 </body>
