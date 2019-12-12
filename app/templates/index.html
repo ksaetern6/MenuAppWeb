@@ -3,28 +3,30 @@
     <p>Hello World from Index</p>
 
     <div class="row">
-        <!-- <div class="card" style="width: 18rem;">
-                <img class="card-img-top" src="{{url_for('static', filename='images/no-image.jpg')}}">
-                <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-        </div> -->
-
-        <!-- <div class="card" style="width: 18rem;">
-                <img class="card-img-top" src="{{url_for('static', filename='images/no-image.jpg')}}">
-                <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-                </div>
-        </div> -->
 
     </div>
+
     <div>
         <img id='myimg' src="">
     </div>
+    <div class="hidden_row">
+
+    </div>
+    <!-- <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">QRCode</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <img src="">
+                </div>
+              </div>
+            </div>
+          </div> -->
 
 
     <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
@@ -58,7 +60,7 @@
     // Read info
     var item_dict = {{ items | safe }}
     
-    // storage.refFromURL("gs://menuapp-f3764.appspot.com/qrcode").getDownloadURL().then(function(url) {
+    // storage.refFromURL("gs://menuapp-f3764.appspot.com/QRCODE_burger_1.jpg").getDownloadURL().then(function(url) {
     //     var imgObj = new Image(400,512)
     //     imgObj.src=url
     //     document.body.append(imgObj)
@@ -66,23 +68,43 @@
     var count = 0;
     item_image_array = Object.keys(item_dict)
     item_image_array.forEach( item => 
-        storage.refFromURL(item).getDownloadURL().then(function(url) {
-            //var imgObj = new Image(300,300);
-            var card = `<div class="card" style="width: 18rem;">
-                            <img class="card-img-top" src="${url}" height="288" width="512">
+        storage.refFromURL(item).getDownloadURL().then(function(imgurl) {
+            var qrUrl = ""
+            storage.refFromURL(item_dict[item]).getDownloadURL().then(function(qrurl){
+                QRCodeUrl = qrurl
+                    var qrmodal = `    
+                    <div class="modal fade" id="ModalLabel${count}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">QRCode</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            </div>
+                            <div class="modal-body">
+                            <img src="${QRCodeUrl}">
+                            </div>
+                        </div>
+                        </div>
+                    </div>`
+                    var card = `<div class="card" style="width: 18rem;">
+                            <img class="card-img-top" src="${imgurl}" height="288" width="512">
                             <div class="card-body">
-                            <h5 class="card-title">Card title</h5>
-                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                                <h5 class="card-title">Card title</h5>
+                                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalLabel${count}">
+                                QRCode
+                                </button>                            
                             </div>
                         </div>`
-            console.log(url)
-            $(".row").append(card);
-            // imgObj.src=url
-            // document.body.append(imgObj);
+                        $(".row").append(card);
+                        $(".hidden_row").append(qrmodal);
+                        count += 1
+            })
         })
     )
-
     </script>
+
 
 {% endblock %}

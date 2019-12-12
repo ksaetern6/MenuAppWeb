@@ -100,7 +100,6 @@ def uploadMain():
 
 		# create qrcode & upload to bucket
 		qrCode = createQRCode(docUrl)
-		print(docUrl)
 		qrCodeName = "QRCODE_" + f.filename
 		qrCodePath = os.path.join(os.getcwd()+'/app/uploads', qrCodeName)
 		qrCode.save(qrCodePath)
@@ -111,18 +110,6 @@ def uploadMain():
 		# add qrcode to firestore
 		addFieldToDocument('QRCode',qrCodeRef,restauId,docUrl)
 
-
-		# create
-		# img = createQRCode("file")
-		# filePath = os.path.join(os.getcwd()+'/app/uploads', f.filename)
-		# img.save(filePath)
-		# upload_blob(app.config["STORAGE_BUCKET"],filePath,'qrcode')
-
-		# f.save(os.path.join(os.getcwd()+'/app/uploads', f.filename))
-		# db.child('')
-		# get QRcode of image
-		# upload images to firebase
-		# upload locationRef of both QRCode and Image to firestore
 	return render_template('/upload.html', page="Upload")
 
 @app.route("/base")
@@ -161,7 +148,7 @@ def createQRCode(data):
 		box_size=10,
 		border=4,
 	)
-	qr.add_data(data)
+	qr.add_data(f"/{data}")
 	qr.make(fit=True)
 	img = qr.make_image(fill_color="black", back_color="white")
 	return img
