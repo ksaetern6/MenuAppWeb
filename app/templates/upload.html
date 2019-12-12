@@ -1,6 +1,7 @@
-<html>
+{% extends 'base.html' %}
+{% block content %}
     <head>
-    <header><title>Upload</title></header> -->
+    <header><title>Upload</title></header>
     {{ dropzone.load_css() }}
     {{ dropzone.style('border: 2px dashed #0087F7; margin: 10%; min-height: 400px;') }}
     </head>
@@ -10,4 +11,4 @@
         {{ dropzone.load_js() }}
         {{ dropzone.config() }}
     </body>
-</html>
+{% endblock %}

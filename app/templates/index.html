@@ -2,13 +2,25 @@
 {% block content %}
     <p>Hello World from Index</p>
 
-    <div class="card" style="width: 18rem;">
-            <img class="card-img-top" src="https://firebasestorage.googleapis.com/v0/b/menuapp-f3764.appspot.com/o/Konas%2Fsandwich1%2Fsandwich.jpg?alt=media&token=8f8cc222-39e4-46c5-b77b-1eb4fcd64576 alt="Card image cap">
-            <div class="card-body">
-              <h5 class="card-title">Card title</h5>
-              <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-              <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
+    <div class="row">
+        <!-- <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="{{url_for('static', filename='images/no-image.jpg')}}">
+                <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+        </div> -->
+
+        <!-- <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="{{url_for('static', filename='images/no-image.jpg')}}">
+                <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                <a href="#" class="btn btn-primary">Go somewhere</a>
+                </div>
+        </div> -->
+
     </div>
     <div>
         <img id='myimg' src="">
@@ -45,16 +57,32 @@
 
     // Read info
     var item_dict = {{ items | safe }}
-
-    for(item in item_dict){
-        storage.refFromURL(item_dict[item]).getDownloadURL().then(function(url) {
-            var imgObj = new Image(300,300);
-            imgObj.src=url
-            document.body.append(imgObj);
+    
+    // storage.refFromURL("gs://menuapp-f3764.appspot.com/qrcode").getDownloadURL().then(function(url) {
+    //     var imgObj = new Image(400,512)
+    //     imgObj.src=url
+    //     document.body.append(imgObj)
+    // })
+    var count = 0;
+    item_image_array = Object.keys(item_dict)
+    item_image_array.forEach( item => 
+        storage.refFromURL(item).getDownloadURL().then(function(url) {
+            //var imgObj = new Image(300,300);
+            var card = `<div class="card" style="width: 18rem;">
+                            <img class="card-img-top" src="${url}" height="288" width="512">
+                            <div class="card-body">
+                            <h5 class="card-title">Card title</h5>
+                            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                            </div>
+                        </div>`
+            console.log(url)
+            $(".row").append(card);
+            // imgObj.src=url
+            // document.body.append(imgObj);
         })
-    }
+    )
 
     </script>
-
 
 {% endblock %}

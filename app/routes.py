@@ -1,8 +1,9 @@
 import os
-import pyrebase
+import qrcode
+import io
 import firebase_admin
 from firebase_admin import credentials, auth
-from firebase_admin import firestore
+from firebase_admin import firestore, storage
 from app import app, FireBaseAuth
 from app.forms import LoginForm
 from flask_login import login_required
@@ -21,11 +22,19 @@ config = {
 
 }
 
-#firebase-admin SDK
+# firebase-admin SDK
 cred = credentials.Certificate(app.config['GOOGLE_APPLICATION_CREDS'])
-firebase_admin.initialize_app(cred)
+firebase_admin.initialize_app(cred, {
+	'storageBucket': app.config["STORAGE_BUCKET"]
+})
 
 db = firestore.client()
+
+# google-cloud storage
+bucket = storage.bucket()
+#storage_client = storage.Client()
+
+
 
 @app.route("/", methods=['GET','POST'])
 #@login_required
@@ -75,18 +84,55 @@ def loginMain():
 @app.route("/upload", methods=['GET', 'POST'])
 def uploadMain():
 	if request.method == 'POST':
+		# get uploaded file
 		f = request.files.get('file')
+		
+		bucketName = app.config['STORAGE_BUCKET']
+		restauId = getRestaurantId(session['uid'])
+
+
+
+		# upload to bucket
+		locRef = upload_blob(bucketName, f, f.filename,'file')
+		# create intial document with image reference
+		docUrl = createDocumentFirestore(restauId)
+		addFieldToDocument('locationRef',locRef,restauId,docUrl)
+
+		# create qrcode & upload to bucket
+		qrCode = createQRCode(docUrl)
+		print(docUrl)
+		qrCodeName = "QRCODE_" + f.filename
+		qrCodePath = os.path.join(os.getcwd()+'/app/uploads', qrCodeName)
+		qrCode.save(qrCodePath)
+		qrCodeRef = upload_blob(bucketName,qrCodePath,qrCodeName,'qrcode')
+		# delete the saved qrcode
+		os.remove(qrCodePath)
+
+		# add qrcode to firestore
+		addFieldToDocument('QRCode',qrCodeRef,restauId,docUrl)
+
+
+		# create
+		# img = createQRCode("file")
+		# filePath = os.path.join(os.getcwd()+'/app/uploads', f.filename)
+		# img.save(filePath)
+		# upload_blob(app.config["STORAGE_BUCKET"],filePath,'qrcode')
+
 		# f.save(os.path.join(os.getcwd()+'/app/uploads', f.filename))
 		# db.child('')
 		# get QRcode of image
 		# upload images to firebase
 		# upload locationRef of both QRCode and Image to firestore
-	return render_template('/upload.html')
+	return render_template('/upload.html', page="Upload")
 
 @app.route("/base")
 def basePage():
 	return render_template('/base.html')
 
+
+"""
+<====================== METHODS ==========================>
+"""
 def getAllItems(uid):
 	# find the restaurant based on user's id
 	resta_ref = db.collection(u'Restaurants')
@@ -107,3 +153,51 @@ def getAllItems(uid):
 		items[item_dict['locationRef']] = item_dict['QRCode']
 
 	return items
+
+def createQRCode(data):
+	qr = qrcode.QRCode(
+		version=1,
+		error_correction=qrcode.constants.ERROR_CORRECT_L,
+		box_size=10,
+		border=4,
+	)
+	qr.add_data(data)
+	qr.make(fit=True)
+	img = qr.make_image(fill_color="black", back_color="white")
+	return img
+
+def upload_blob(bucket_name, file, 	dest_blob_name, filetype):
+	# upload file to bucket
+	blob = bucket.blob(dest_blob_name)
+
+	if filetype is "file":
+		blob.upload_from_file(file,content_type="image/jpeg")
+	else:
+		blob.upload_from_filename(file,content_type="image/jpeg")
+
+	fileUrl = 'gs://' + bucket_name + f"/{dest_blob_name}"
+	return fileUrl
+
+def createDocumentFirestore(restauId):
+	doc_ref = db.collection(u'Restaurants').document(restauId).collection('items').document()
+	docUrl = 'Restaurants' + f"/{restauId}" + "/items" + f"/{doc_ref.id}"
+	return docUrl
+
+def addFieldToDocument(key, data, restauID, docUrl):
+	data = {
+		u'{}'.format(key): data
+	}
+	doc_ref = db.document(docUrl)
+	doc_ref.set(data,merge=True)
+	return 
+
+def getRestaurantId(uid):
+	# find the restaurant based on user's id
+	resta_ref = db.collection(u'Restaurants')
+	query_ref = resta_ref.where(u'uid', u'==', u'{}'.format(uid)).stream()
+
+	resta_id=''
+	for doc in query_ref:
+		resta_id = doc.id
+
+	return resta_id
