@@ -117,6 +117,9 @@ def uploadMain():
 
 		# add qrcode to firestore
 		addFieldToDocument('QRCode',qrCodeRef,restauId,docUrl)
+		addFieldToDocument('description', "",restauId,docUrl)
+		addFieldToDocument('name',f.filename,restauId,docUrl)
+		addFieldToDocument('res_ref',"/Restaurants/"+restauId,restauId,docUrl)
 	if session['uid']:
 		STATUS=True
 	else:
@@ -125,11 +128,12 @@ def uploadMain():
 
 @app.route("/base")
 def basePage():
+	FB_API_KEY = app.config['FIREBASE_API_KEY']
 	if session['uid']:
 		STATUS=True
 	else:
 		STATUS=False
-	return render_template('/base.html' , status=STATUS)
+	return render_template('/base.html' , status=STATUS, FB_API_KEY=FB_API_KEY)
 
 
 """

@@ -41,7 +41,7 @@
                       </ul>
                       {% if status == true %}
                         <form action="{{ url_for('loginMain') }}" class="form-inline my-2 my-lg-0">
-                                <button class="btn btn-outline-danger my-2 my-sm-0">Logout</button>
+                                <button id="sign-out-btn" class="btn btn-outline-danger my-2 my-sm-0">Logout</button>
                             </form>
                       {% else %}
                         <form action="{{ url_for('loginMain') }}" class="form-inline my-2 my-lg-0">
@@ -50,6 +50,7 @@
                       {% endif %}
                     </div>
                   </nav>
+ 
         {% block content %} {% endblock %}
 
 
